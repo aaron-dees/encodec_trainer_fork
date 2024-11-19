@@ -148,8 +148,8 @@ def training(max_epoch = 5, log_interval = 20, fixed_length = 0, tensor_cut=1000
     for epoch in range(1, max_epoch):
 
         train(epoch)
-        torch.save(model.state_dict(), f'{SAVE_LOCATION}epoch{epoch}.pth') #epoch{epoch}.pth
-        torch.save(disc.state_dict(), f'{SAVE_LOCATION}epoch{epoch}_disc.pth')
+        # torch.save(model.state_dict(), f'{SAVE_LOCATION}epoch{epoch}.pth') #epoch{epoch}.pth
+        # torch.save(disc.state_dict(), f'{SAVE_LOCATION}epoch{epoch}_disc.pth')
 
         adjust_learning_rate(optimizer, epoch)
         adjust_learning_rate(optimizer_disc, epoch)
