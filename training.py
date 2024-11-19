@@ -15,8 +15,10 @@ TENSOR_CUT = 50000 #10000
 MAX_EPOCH = 10000 # Just set this to a very big number and manually stop it
 SAVE_FOLDER = f'saves/new7/'
 SAVE_LOCATION = f'{SAVE_FOLDER}batch{BATCH_SIZE}_cut{TENSOR_CUT}_' # appends epoch{epoch}.pth
-DEVICE = 'cpu'
-
+if torch.cuda.is_available():
+    DEVICE = torch.device("cuda:0")
+else:
+    DEVICE = torch.device("cpu")
 if not os.path.exists(SAVE_FOLDER):
    os.makedirs(SAVE_FOLDER)
 
