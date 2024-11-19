@@ -15,6 +15,7 @@ TENSOR_CUT = 50000 #10000
 MAX_EPOCH = 10000 # Just set this to a very big number and manually stop it
 SAVE_FOLDER = f'saves/new7/'
 SAVE_LOCATION = f'{SAVE_FOLDER}batch{BATCH_SIZE}_cut{TENSOR_CUT}_' # appends epoch{epoch}.pth
+DEVICE = 'cpu'
 
 if not os.path.exists(SAVE_FOLDER):
    os.makedirs(SAVE_FOLDER)
@@ -33,7 +34,7 @@ def total_loss(fmap_real, logits_fake, fmap_fake, wav1, wav2, sample_rate=24000)
     loss = loss * (2/3)
 
     for i in range(5, 11):
-        fft = Audio2Mel(win_length=2 ** i, hop_length=2 ** i // 4, n_mel_channels=64, sampling_rate=sample_rate)
+        fft = Audio2Mel(win_length=2 ** i, hop_length=2 ** i // 4, n_mel_channels=64, sampling_rate=sample_rate, device=DEVICE)
         loss = loss + l1Loss(fft(wav1), fft(wav2)) + l2Loss(fft(wav1), fft(wav2))
     loss = (loss / 6) + l1Loss(wav1, wav2)
     return loss
@@ -88,11 +89,11 @@ def training(max_epoch = 5, log_interval = 20, fixed_length = 0, tensor_cut=1000
                 segment=1., name='my_encodec_24khz')
     model.train()
     model.train_quantization = True
-    # model.cuda()
+    model.to(DEVICE)
     
     disc = MultiScaleSTFTDiscriminator(filters=32)
     disc.train()
-    # disc.cuda()
+    disc.to(DEVICE)
 
 
     lr = 0.01
@@ -107,7 +108,7 @@ def training(max_epoch = 5, log_interval = 20, fixed_length = 0, tensor_cut=1000
         print('----------------------------------------Epoch: {}----------------------------------------'.format(epoch))
         for batch_idx, input_wav in enumerate(trainloader):
             train_d = not train_d
-            # input_wav = input_wav.cuda()
+            input_wav = input_wav.to(DEVICE)
             optimizer.zero_grad()
             model.zero_grad()
             optimizer_disc.zero_grad()
